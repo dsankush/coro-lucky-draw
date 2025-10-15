@@ -387,6 +387,20 @@
 
   <!-- JavaScript -->
   <script>
+    // ===== IMAGE PATH CONFIGURATION =====
+    // Change this path to easily update all image locations
+    const IMAGE_BASE_PATH = "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/page1";
+    
+    // Image file names
+    const IMAGES = {
+      bg_top: "b2.jpg",
+      bg_bottom: "b1.jpg",
+      start_button: "bt1.jpg",
+      carousel: ["w1.jpg", "w2.jpg", "w3.jpg", "w4.jpg", "w5.png"]
+    };
+    
+    // ===== END CONFIGURATION =====
+
     const startButton = document.getElementById("startButton");
     const initialButtonContainer = document.getElementById("initialButtonContainer");
     const wheelContainer = document.getElementById("wheelContainer");
@@ -399,9 +413,30 @@
     const nextBtn = document.getElementById("nextBtn");
     const closeCarousel = document.getElementById("closeCarousel");
 
-    const carouselItems = ["w1.jpg", "w2.jpg", "w3.jpg", "w4.jpg","w5.png"];
+    const carouselItems = IMAGES.carousel.map(img => IMAGE_BASE_PATH + img);
     let currentIndex = 0;
     let hasSpun = false;
+
+    // Set background images
+    document.documentElement.style.setProperty(
+      '--bg-url-top',
+      `url("${IMAGE_BASE_PATH}${IMAGES.bg_top}")`
+    );
+    document.documentElement.style.setProperty(
+      '--bg-url-bottom',
+      `url("${IMAGE_BASE_PATH}${IMAGES.bg_bottom}")`
+    );
+
+    // Update full-page background dynamically
+    const fullPage = document.querySelector('.full-page');
+    fullPage.style.backgroundImage = `
+      url("${IMAGE_BASE_PATH}${IMAGES.bg_top}") top center / 100% 50% no-repeat,
+      url("${IMAGE_BASE_PATH}${IMAGES.bg_bottom}") bottom center / 100% 50% no-repeat
+    `;
+    fullPage.style.backgroundAttachment = 'fixed';
+
+    // Update start button image
+    document.querySelector('.glow-effect').src = IMAGE_BASE_PATH + IMAGES.start_button;
 
     function updateCarousel(index) {
       carouselImage.src = carouselItems[index];
