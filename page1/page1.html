@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucky Draw - Prize Carousel</title>
+  <title>Prize 1 - Winner Announcement</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -226,6 +227,8 @@
       transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
       letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .shiny-home:hover {
@@ -244,21 +247,51 @@
     
     /* Enhanced carousel styling */
     .carousel-container {
-      background: transparent;
-      backdrop-filter: none;
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
     }
     
-    .carousel-image {
+    .winner-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+      border: 2px solid rgba(59, 130, 246, 0.3);
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
     }
-    
-    .carousel-image:hover {
-      transform: scale(1.02);
+
+    .winner-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(59, 130, 246, 0.3);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .winner-title {
+      color: #facc15;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .winner-info {
+      color: #fff;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .winner-info strong {
+      color: #facc15;
+      font-weight: 700;
     }
     
     .control-button {
@@ -266,16 +299,22 @@
       border: 2px solid #f59e0b;
       color: #1f2937;
       font-weight: 700;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
       transition: all 0.3s ease;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      font-size: 1.1rem;
     }
     
     .control-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
+    }
+
+    .control-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     
     .close-button {
@@ -283,7 +322,7 @@
       border: 2px solid #1d4ed8;
       color: white;
       font-weight: 700;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
       transition: all 0.3s ease;
@@ -297,24 +336,43 @@
     .dot-indicator {
       transition: all 0.3s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
     }
     
     .dot-indicator.active {
       background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      transform: scale(1.2);
+      transform: scale(1.3);
     }
     
     .dot-indicator:not(.active) {
       background: rgba(255, 255, 255, 0.3);
+    }
+
+    .loading {
+      color: #facc15;
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .batch-info {
+      color: #facc15;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     
   </style>
 </head>
 <body class="m-0 p-0 overflow-hidden">
   <div class="full-page">
-    <a href="C:\Users\aspir\Downloads\luckydraw_system/index.html" class="absolute top-10 left-10 shiny-home">
-    Home
-  </a>
+    <a href="lucky-draw.html" class="absolute top-10 left-10 shiny-home z-30">
+      ← Back
+    </a>
 
     <!-- Start Button -->
     <div id="initialButtonContainer" class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20">
@@ -361,23 +419,20 @@
       </button>
     </div>
 
-    <!-- Carousel Viewer -->
-    <div id="carouselContainer" class="fixed inset-0 flex items-center justify-center z-30 hidden bg-transparent">
-      <div class="max-w-screen-lg w-full carousel-container p-6 flex flex-col items-center">
-        <img
-          id="carouselImage"
-          src=""
-          alt="Carousel Image"
-          class="w-full max-h-[85vh] object-contain carousel-image"
-        />
+    <!-- Winner Display Carousel -->
+    <div id="carouselContainer" class="fixed inset-0 flex items-center justify-center z-30 hidden">
+      <div class="carousel-container">
+        <div id="winnerDisplay" class="loading">
+          Loading winners...
+        </div>
 
         <!-- Dots Indicator -->
-        <div id="carouselDots" class="flex justify-center mt-4 gap-2"></div>
+        <div id="carouselDots" class="flex justify-center mt-6 gap-3"></div>
 
         <!-- Controls -->
-        <div class="mt-4 flex gap-4">
-          <button id="prevBtn" class="control-button">‹</button>
-          <button id="nextBtn" class="control-button">›</button>
+        <div class="mt-6 flex gap-4 justify-center">
+          <button id="prevBtn" class="control-button">‹ Previous</button>
+          <button id="nextBtn" class="control-button">Next ›</button>
           <button id="closeCarousel" class="close-button">Close</button>
         </div>
       </div>
@@ -387,75 +442,110 @@
 
   <!-- JavaScript -->
   <script>
-    // ===== IMAGE PATH CONFIGURATION =====
-    // Change this path to easily update all image locations
-    const IMAGE_BASE_PATH = "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/page1";
-    
-    // Image file names
-    const IMAGES = {
-      bg_top: "b2.jpg",
-      bg_bottom: "b1.jpg",
-      start_button: "bt1.jpg",
-      carousel: ["w1.jpg", "w2.jpg", "w3.jpg", "w4.jpg", "w5.png"]
-    };
-    
-    // ===== END CONFIGURATION =====
-
     const startButton = document.getElementById("startButton");
     const initialButtonContainer = document.getElementById("initialButtonContainer");
     const wheelContainer = document.getElementById("wheelContainer");
     const wheelButton = document.getElementById("wheelButton");
     const wheelImage = document.getElementById("wheelImage");
     const carouselContainer = document.getElementById("carouselContainer");
-    const carouselImage = document.getElementById("carouselImage");
+    const winnerDisplay = document.getElementById("winnerDisplay");
     const carouselDots = document.getElementById("carouselDots");
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
     const closeCarousel = document.getElementById("closeCarousel");
 
-    const carouselItems = IMAGES.carousel.map(img => IMAGE_BASE_PATH + img);
+    let winnersData = [];
+    let batchedData = [];
     let currentIndex = 0;
     let hasSpun = false;
+    const BATCH_SIZE = 10;
 
-    // Set background images
-    document.documentElement.style.setProperty(
-      '--bg-url-top',
-      `url("${IMAGE_BASE_PATH}${IMAGES.bg_top}")`
-    );
-    document.documentElement.style.setProperty(
-      '--bg-url-bottom',
-      `url("${IMAGE_BASE_PATH}${IMAGES.bg_bottom}")`
-    );
+    // Load winner data from CSV
+    function loadWinnerData() {
+      Papa.parse('w1d.csv', {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          winnersData = results.data;
+          console.log('✅ Loaded winners:', winnersData.length);
+          
+          // Create batches of 10
+          batchedData = [];
+          for (let i = 0; i < winnersData.length; i += BATCH_SIZE) {
+            batchedData.push(winnersData.slice(i, i + BATCH_SIZE));
+          }
+          
+          console.log('📦 Created batches:', batchedData.length);
+          updateWinnerDisplay(currentIndex);
+        },
+        error: function(error) {
+          console.error('❌ Error loading data:', error);
+          winnerDisplay.innerHTML = `
+            <div class="text-red-400 text-center">
+              <p class="text-xl font-bold mb-2">⚠️ Error Loading Winners</p>
+              <p>Could not load w1d.csv file. Please make sure the file exists.</p>
+            </div>
+          `;
+        }
+      });
+    }
 
-    // Update full-page background dynamically
-    const fullPage = document.querySelector('.full-page');
-    fullPage.style.backgroundImage = `
-      url("${IMAGE_BASE_PATH}${IMAGES.bg_top}") top center / 100% 50% no-repeat,
-      url("${IMAGE_BASE_PATH}${IMAGES.bg_bottom}") bottom center / 100% 50% no-repeat
-    `;
-    fullPage.style.backgroundAttachment = 'fixed';
+    function updateWinnerDisplay(index) {
+      if (batchedData.length === 0) {
+        winnerDisplay.innerHTML = '<div class="loading">No winner data available</div>';
+        return;
+      }
 
-    // Update start button image
-    document.querySelector('.glow-effect').src = IMAGE_BASE_PATH + IMAGES.start_button;
+      const batch = batchedData[index];
+      const batchNumber = index + 1;
+      const totalBatches = batchedData.length;
+      const startSr = (index * BATCH_SIZE) + 1;
+      const endSr = Math.min(startSr + batch.length - 1, winnersData.length);
 
-    function updateCarousel(index) {
-      carouselImage.src = carouselItems[index];
+      let html = `
+        <div class="batch-info">
+          🏆 Winners ${startSr} - ${endSr} of ${winnersData.length} (Batch ${batchNumber}/${totalBatches})
+        </div>
+      `;
+
+      batch.forEach((winner, idx) => {
+        html += `
+          <div class="winner-card">
+            <div class="winner-title">🎉 Winner #${startSr + idx}</div>
+            <div class="winner-info">
+              <div><strong>👤 Name:</strong> ${winner['Farmer Name'] || 'N/A'}</div>
+              <div><strong>📱 Mobile:</strong> ${winner['Mobile Number'] || 'N/A'}</div>
+              <div><strong>📍 District:</strong> ${winner['District'] || 'N/A'}</div>
+              <div><strong>🏢 Headquarter:</strong> ${winner['Headquater'] || 'N/A'}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      winnerDisplay.innerHTML = html;
       renderDots();
+      updateButtonStates();
     }
 
     function renderDots() {
       carouselDots.innerHTML = "";
-      carouselItems.forEach((_, index) => {
+      batchedData.forEach((_, index) => {
         const dot = document.createElement("span");
-        dot.className = `w-3 h-3 rounded-full cursor-pointer dot-indicator ${
+        dot.className = `dot-indicator cursor-pointer ${
           index === currentIndex ? "active" : ""
         }`;
         dot.addEventListener("click", () => {
           currentIndex = index;
-          updateCarousel(currentIndex);
+          updateWinnerDisplay(currentIndex);
         });
         carouselDots.appendChild(dot);
       });
+    }
+
+    function updateButtonStates() {
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === batchedData.length - 1;
     }
 
     startButton.addEventListener("click", () => {
@@ -463,7 +553,7 @@
 
       if (hasSpun) {
         carouselContainer.classList.remove("hidden");
-        updateCarousel(currentIndex);
+        updateWinnerDisplay(currentIndex);
       } else {
         wheelContainer.classList.remove("hidden");
       }
@@ -477,19 +567,23 @@
         wheelImage.classList.remove("professional-spin");
         wheelContainer.classList.add("hidden");
         carouselContainer.classList.remove("hidden");
-        updateCarousel(currentIndex);
+        loadWinnerData();
         hasSpun = true;
       }, 4000);
     });
 
     prevBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
-      updateCarousel(currentIndex);
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateWinnerDisplay(currentIndex);
+      }
     });
 
     nextBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % carouselItems.length;
-      updateCarousel(currentIndex);
+      if (currentIndex < batchedData.length - 1) {
+        currentIndex++;
+        updateWinnerDisplay(currentIndex);
+      }
     });
 
     closeCarousel.addEventListener("click", () => {
