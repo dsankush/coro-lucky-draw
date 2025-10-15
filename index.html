@@ -124,37 +124,83 @@
   </style>
 </head>
 
-
-
 <body>
 
   <div class="full-page">
     <!-- Card Container (Utilizing Full Width) -->
-    <div class="card-container">
-      <a href="C:\Users\aspir\Downloads\luckydraw_system/page1/page1.html" class="card">
-    <img src="source/card1.jpg" alt="Card 1">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page2/page2.html" class="card">
-    <img src="source/card2.jpg" alt="Card 2">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page3/page3.html" class="card">
-    <img src="source/card3.jpg" alt="Card 3">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page4/page4.html" class="card">
-    <img src="source/card4.jpg" alt="Card 4">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page5/page5.html" class="card">
-    <img src="source/card5.jpeg" alt="Card 5">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page6/page6.html" class="card">
-    <img src="source/card6.jpg" alt="Card 6">
-  </a>
-  <a href="C:\Users\aspir\Downloads\luckydraw_system/page7/page7.html" class="card">
-    <img src="source/card7.jpg" alt="Card 7">
-  </a>
-
-    </div>
+    <div class="card-container" id="cardContainer"></div>
   </div>
+
+  <script>
+    // ===== IMAGE PATH & NAVIGATION CONFIGURATION =====
+    // Change these values to easily update all image and link locations
+    const CONFIG = {
+      imagePath: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry",
+      pageBasePath: "https://dsankush.github.io/coro-lucky-draw/",
+      backgroundImages: {
+        top: "home_screen_1.jpg",
+        bottom: "home_screen_2.png"
+      },
+      cards: [
+        {
+          image: "source/card1.jpg",
+          link: "page1/page1.html"
+        },
+        {
+          image: "source/card2.jpg",
+          link: "page2/page2.html"
+        },
+        {
+          image: "source/card3.jpg",
+          link: "page3/page3.html"
+        },
+        {
+          image: "source/card4.jpg",
+          link: "page4/page4.html"
+        },
+        {
+          image: "source/card5.jpeg",
+          link: "page5/page5.html"
+        },
+        {
+          image: "source/card6.jpg",
+          link: "page6/page6.html"
+        },
+        {
+          image: "source/card7.jpg",
+          link: "page7/page7.html"
+        }
+      ]
+    };
+    // ===== END CONFIGURATION =====
+
+    // Set background images dynamically
+    const fullPage = document.querySelector('.full-page');
+    fullPage.style.backgroundImage = `
+      url("${CONFIG.imagePath}${CONFIG.backgroundImages.top}") top center / cover no-repeat,
+      url("${CONFIG.imagePath}${CONFIG.backgroundImages.bottom}") bottom center / cover no-repeat
+    `;
+    fullPage.style.backgroundSize = "100% 50%, 100% 50%";
+    fullPage.style.backgroundPosition = "top, bottom";
+    fullPage.style.backgroundAttachment = "fixed";
+
+    // Generate cards dynamically
+    const cardContainer = document.getElementById('cardContainer');
+    
+    CONFIG.cards.forEach((card, index) => {
+      const link = document.createElement('a');
+      link.href = CONFIG.pageBasePath + card.link;
+      link.className = 'card';
+      link.title = `Card ${index + 1}`;
+      
+      const img = document.createElement('img');
+      img.src = CONFIG.imagePath + card.image;
+      img.alt = `Card ${index + 1}`;
+      
+      link.appendChild(img);
+      cardContainer.appendChild(link);
+    });
+  </script>
 
 </body>
 </html>
