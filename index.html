@@ -53,6 +53,7 @@
       position: relative;
       transition: transform 0.3s ease-in-out;
       animation: jump 2s infinite ease-in-out, glow 1.5s infinite alternate;
+      background: rgba(0, 0, 0, 0.1);
     }
 
     /* Hover effect */
@@ -87,6 +88,36 @@
       height: 100%;
       object-fit: cover;
       border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .card img.loaded {
+      opacity: 1;
+    }
+
+    /* Loading spinner */
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 30px;
+      margin: -15px 0 0 -15px;
+      border: 3px solid rgba(255, 215, 0, 0.3);
+      border-top-color: rgba(255, 215, 0, 0.8);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .card img.loaded ~ .card::after,
+    .card.image-loaded::after {
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* Jumping animation */
@@ -149,14 +180,21 @@
         {
           image: "Card6.jpg",
           link: "page6/page6.html"
-        },
-        {
-          image: "Card7.jpg",
-          link: "page7/page7.html"
         }
       ]
     };
     // ===== END CONFIGURATION =====
+
+    // Preload images for faster loading
+    const preloadImages = (cards) => {
+      cards.forEach(card => {
+        const img = new Image();
+        img.src = card.image.startsWith('http') ? card.image : CONFIG.imagePath + card.image;
+      });
+    };
+
+    // Start preloading
+    preloadImages(CONFIG.cards);
 
     // Generate cards dynamically
     const cardContainer = document.getElementById('cardContainer');
@@ -167,10 +205,17 @@
       link.className = 'card';
       link.title = `Card ${index + 1}`;
       
-      const img = document.createElement('img');
-      // Check if image is already a full URL or needs the base path
-      img.src = card.image.startsWith('http') ? card.image : CONFIG.imagePath + card.image;
+      const img = new Image();
       img.alt = `Card ${index + 1}`;
+      
+      // Show image smoothly when loaded
+      img.onload = function() {
+        this.classList.add('loaded');
+        link.classList.add('image-loaded');
+      };
+      
+      // Set source after onload handler
+      img.src = card.image.startsWith('http') ? card.image : CONFIG.imagePath + card.image;
       
       link.appendChild(img);
       cardContainer.appendChild(link);
