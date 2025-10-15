@@ -532,7 +532,7 @@
     
     // Load winners data from CSV
     function loadWinnersData() {
-      Papa.parse('w1d.csv', {
+      Papa.parse('https://raw.githubusercontent.com/dsankush/coro-lucky-draw/refs/heads/main/page1/w1d.csv', {
         download: true,
         header: true,
         complete: function(results) {
@@ -723,3 +723,4 @@
   </script>
 </body>
 </html>
+
