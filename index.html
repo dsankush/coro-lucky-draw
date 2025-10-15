@@ -34,12 +34,12 @@
       display: flex;
       gap: 10px;
       position: absolute;
-      top: 53%; /* Slightly above the middle of the second image */
+      top: 53%;
       left: 50%;
       transform: translateX(-50%);
-      width: 90%; /* Uses more of the screen width */
+      width: 90%;
       justify-content: space-evenly;
-      flex-wrap: wrap; /* Cards wrap if necessary */
+      flex-wrap: wrap;
     }
 
     /* Individual card */
@@ -47,20 +47,18 @@
       width: 180px;
       height: 300px;
       border-radius: 15px;
-      border: 3px solid rgba(255, 255, 150, 0.8); /* Light yellow border */
-      border-radius: 15px; /* Rounded corners */
-      box-shadow: 0 0 10px rgba(255, 255, 150, 0.5); /* Soft glow effect */
+      border: 3px solid rgba(255, 255, 150, 0.8);
+      box-shadow: 0 0 10px rgba(255, 255, 150, 0.5);
       cursor: pointer;
       position: relative;
       transition: transform 0.3s ease-in-out;
-      animation: jump 2s infinite ease-in-out, glow 1.5s infinite alternate; /* Both effects */
-
+      animation: jump 2s infinite ease-in-out, glow 1.5s infinite alternate;
     }
 
-    /* Hover effect - glowing effect & bounce */
+    /* Hover effect */
     .card:hover {
       transform: scale(1.15);
-      animation: none; /* Stops zoom effect when hovered */
+      animation: none;
     }
 
     /* Golden glowing effect */
@@ -91,98 +89,74 @@
       border-radius: 10px;
     }
 
-    /* Subtle zoom-in and zoom-out effect */
-
-    @keyframes subtleZoom {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); } /* Slightly enlarges */
-      100% { transform: scale(1); }
+    /* Jumping animation */
+    @keyframes jump {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
     }
-/*Jumping*/
-@keyframes jump {
-  0%, 100% {
-    transform: translateY(0); /* Normal position */
-  }
-  50% {
-    transform: translateY(-8px); /* Moves slightly up */
-  }
-}
 
-/* Glowing */
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 1);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-  }
-}
-
+    /* Glowing animation */
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 1);
+      }
+      100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+      }
+    }
   </style>
 </head>
 
 <body>
 
   <div class="full-page">
-    <!-- Card Container (Utilizing Full Width) -->
     <div class="card-container" id="cardContainer"></div>
   </div>
 
   <script>
     // ===== IMAGE PATH & NAVIGATION CONFIGURATION =====
-    // Change these values to easily update all image and link locations
     const CONFIG = {
-      imagePath: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry",
+      imagePath: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/",
       pageBasePath: "https://dsankush.github.io/coro-lucky-draw/",
-      backgroundImages: {
-        top: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/home_screen_1.jpg",
-        bottom: "home_screen_2.png"
-      },
       cards: [
         {
           image: "Card1.jpg",
           link: "page1/page1.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card2.jpg",
+          image: "Card2.jpg",
           link: "page2/page2.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card3.jpg",
+          image: "Card3.jpg",
           link: "page3/page3.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card4.jpg",
+          image: "Card4.jpg",
           link: "page4/page4.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card5.jpeg",
+          image: "Card5.jpeg",
           link: "page5/page5.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card6.jpg",
+          image: "Card6.jpg",
           link: "page6/page6.html"
         },
         {
-          image: "https://raw.githubusercontent.com/dsankush/coro-lucky-draw/main/DB/entry/Card7.jpg",
+          image: "Card7.jpg",
           link: "page7/page7.html"
         }
       ]
     };
     // ===== END CONFIGURATION =====
-
-    // Set background images dynamically
-    const fullPage = document.querySelector('.full-page');
-    fullPage.style.backgroundImage = `
-      url("${CONFIG.imagePath}${CONFIG.backgroundImages.top}") top center / cover no-repeat,
-      url("${CONFIG.imagePath}${CONFIG.backgroundImages.bottom}") bottom center / cover no-repeat
-    `;
-    fullPage.style.backgroundSize = "100% 50%, 100% 50%";
-    fullPage.style.backgroundPosition = "top, bottom";
-    fullPage.style.backgroundAttachment = "fixed";
 
     // Generate cards dynamically
     const cardContainer = document.getElementById('cardContainer');
@@ -194,7 +168,8 @@
       link.title = `Card ${index + 1}`;
       
       const img = document.createElement('img');
-      img.src = CONFIG.imagePath + card.image;
+      // Check if image is already a full URL or needs the base path
+      img.src = card.image.startsWith('http') ? card.image : CONFIG.imagePath + card.image;
       img.alt = `Card ${index + 1}`;
       
       link.appendChild(img);
@@ -204,10 +179,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
